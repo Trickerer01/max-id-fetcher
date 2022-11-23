@@ -6,9 +6,9 @@ Author: trickerer (https://github.com/trickerer, https://github.com/trickerer01)
 #
 #
 
+import sys
 from asyncio import run as run_async, sleep, as_completed
 from re import compile as re_compile, search as re_search
-from sys import argv
 
 from defs import (
     Log, PROXY_DEFAULT_STR, NM_SITE_PAGE_REQUEST_BASE, RN_SITE_PAGE_REQUEST_BASE, RV_SITE_PAGE_REQUEST_BASE, RX_SITE_PAGE_REQUEST_BASE
@@ -50,7 +50,7 @@ async def fetch_rx() -> str:
 
 
 async def main() -> None:
-    if '--silent' not in argv:
+    if '--silent' not in sys.argv:
         input(f'\n{"#" * 47}\n# MAKE SURE REQUIRED PROXIES / UNBLOCKERS ARE ENABLED! #\n{"#" * 47}\nPress <Enter> to continue...\n')
 
     aresults = [fetch_nm(), fetch_rn(), fetch_rv(), fetch_rx()]
@@ -69,6 +69,7 @@ async def run_main() -> None:
 
 
 if __name__ == '__main__':
+    assert sys.version_info >= (3, 7), 'Minimum python version required is 3.7!'
     run_async(run_main())
     Log('')
     exit(0)
