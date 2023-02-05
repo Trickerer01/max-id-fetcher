@@ -36,7 +36,9 @@ async def fetch_rn() -> str:
 async def fetch_rv() -> str:
     rv_page_entry_class_re = re_compile('^th js-open-popup$')
     rv_page_entry_href_re = re_compile(r'^.+/(\d+)/.+?$')
-    a_html = await fetch_html(RV_SITE_PAGE_REQUEST_BASE % ('', 1))
+    a_html = await fetch_html(RV_SITE_PAGE_REQUEST_BASE % ('', 1), tries=999999,
+                              headers={'Referer': RV_SITE_PAGE_REQUEST_BASE % ('', 1)},
+                              cookies={'kt_rt_popAccess': '1', 'kt_tcookie': '1'})
     assert a_html
     maxid = re_search(rv_page_entry_href_re, str(a_html.find('a', class_=rv_page_entry_class_re).get('href'))).group(1)
     return f'RV: {maxid}'

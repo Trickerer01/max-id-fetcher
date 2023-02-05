@@ -6,15 +6,18 @@ Author: trickerer (https://github.com/trickerer, https://github.com/trickerer01)
 #
 #
 
+from asyncio import sleep
+from random import uniform as frand
 from typing import Optional
+from urllib.parse import urlparse
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, http_parser
 from bs4 import BeautifulSoup
 
 from defs import CONNECT_RETRIES_PAGE, Log, DEFAULT_HEADERS
 
 
-async def fetch_html(url: str, proxy=None, tries=None) -> Optional[BeautifulSoup]:
+async def fetch_html(url: str, *, proxy=None, tries=None, headers=None, cookies=None) -> Optional[BeautifulSoup]:
     # very basic, minimum validation
     tries = tries or CONNECT_RETRIES_PAGE
 
@@ -22,6 +25,10 @@ async def fetch_html(url: str, proxy=None, tries=None) -> Optional[BeautifulSoup
     retries = 0
     async with ClientSession() as s:
         s.headers.update(DEFAULT_HEADERS.copy())
+        if headers is not None:
+            s.headers.update(headers.copy())
+        if cookies is not None:
+            s.cookie_jar.update_cookies(cookies.copy(), http_parser.URL(urlparse(url).netloc))
         while retries < tries:
             try:
                 async with s.request('GET', url, timeout=5, proxy=proxy) as r:
@@ -35,6 +42,7 @@ async def fetch_html(url: str, proxy=None, tries=None) -> Optional[BeautifulSoup
                     Log('ERROR: 404')
                     assert False
                 retries += 1
+                await sleep(frand(1.0, 7.0))
                 continue
 
     if retries >= tries:
