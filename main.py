@@ -9,6 +9,7 @@ Author: trickerer (https://github.com/trickerer, https://github.com/trickerer01)
 import sys
 from asyncio import run as run_async, sleep, as_completed
 from re import compile as re_compile, search as re_search
+from urllib.parse import urlparse
 
 from defs import (
     Log, PROXY_DEFAULT_STR, NM_SITE_PAGE_REQUEST_BASE, RN_SITE_PAGE_REQUEST_BASE, RV_SITE_PAGE_REQUEST_BASE, RX_SITE_PAGE_REQUEST_BASE
@@ -37,7 +38,9 @@ async def fetch_rv() -> str:
     rv_page_entry_class_re = re_compile('^th js-open-popup$')
     rv_page_entry_href_re = re_compile(r'^.+/(\d+)/.+?$')
     a_html = await fetch_html(RV_SITE_PAGE_REQUEST_BASE % ('', 1), tries=999999,
-                              headers={'Referer': RV_SITE_PAGE_REQUEST_BASE % ('', 1)},
+                              headers={'Referer': RV_SITE_PAGE_REQUEST_BASE % ('', 1),
+                                       'X-fancyBox': 'true', 'X-Requested-With': 'XMLHttpRequest',
+                                       'Host': urlparse(RV_SITE_PAGE_REQUEST_BASE % ('', 1)).netloc},
                               cookies={'kt_rt_popAccess': '1', 'kt_tcookie': '1'})
     assert a_html
     maxid = re_search(rv_page_entry_href_re, str(a_html.find('a', class_=rv_page_entry_class_re).get('href'))).group(1)
