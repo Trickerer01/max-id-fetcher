@@ -19,7 +19,7 @@ RV_SITE_PAGE_REQUEST_BASE = b64decode(
 RX_SITE_PAGE_REQUEST_BASE = (
     f'{b64decode("aHR0cHM6Ly9hcGkucnVsZTM0Lnh4eC8=").decode()}index.php?page=dapi&s=post&q=index&limit=1')
 
-USER_AGENT = 'Mozilla/5.0 (X11; Linux i686; rv:68.9) Gecko/20100101 Goanna/4.8 Firefox/68.9'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux i686; rv:102.0) Gecko/20100101 Firefox/102.0'
 DEFAULT_HEADERS = {'User-Agent': USER_AGENT}
 PROXY_DEFAULT_STR = 'socks5://127.0.0.1:222'
 
