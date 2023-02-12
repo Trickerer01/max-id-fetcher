@@ -14,8 +14,8 @@ NM_SITE_PAGE_REQUEST_BASE = b64decode(
 RN_SITE_PAGE_REQUEST_BASE = f'{b64decode("aHR0cHM6Ly9ydWxlMzRoZW50YWkubmV0Lw==").decode()}post/list/order%253Did_desc/1'
 # Params required: (str, int). Ex. RV_SITE_PAGE_REQUEST_BASE % ('', 1)
 RV_SITE_PAGE_REQUEST_BASE = b64decode(
-    'aHR0cHM6Ly9ydWxlMzR2aWRlby5jb20vc2VhcmNoLz9tb2RlPWFzeW5jJmZ1bmN0aW9uPWdldF9ibG9jayZibG9ja19pZD1jdXN0b21fbGlzdF92aWRlb3NfdmlkZW9zX2xpc3'
-    'Rfc2VhcmNoJnE9JXMmc29ydF9ieT1wb3N0X2RhdGUmZnJvbV92aWRlb3M9JWQ=').decode()
+    'aHR0cHM6Ly9ydWxlMzR2aWRlby5wYXJ0eS9zZWFyY2gvP21vZGU9YXN5bmMmZnVuY3Rpb249Z2V0X2Jsb2NrJmJsb2NrX2lkPWN1c3RvbV9saXN0X3ZpZGVvc192aWRlb3Nf'
+    'bGlzdF9zZWFyY2gmcT0lcyZzb3J0X2J5PXBvc3RfZGF0ZSZmcm9tX3ZpZGVvcz0lZA==').decode()
 RX_SITE_PAGE_REQUEST_BASE = (
     f'{b64decode("aHR0cHM6Ly9hcGkucnVsZTM0Lnh4eC8=").decode()}index.php?page=dapi&s=post&q=index&limit=1')
 
