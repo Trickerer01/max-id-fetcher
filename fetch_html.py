@@ -17,13 +17,13 @@ from bs4 import BeautifulSoup
 from defs import CONNECT_RETRIES_PAGE, Log, DEFAULT_HEADERS
 
 
-async def fetch_html(url: str, *, proxy=None, tries=None, headers=None, cookies=None) -> Optional[BeautifulSoup]:
+async def fetch_html(url: str, *, connector=None, tries=None, headers=None, cookies=None) -> Optional[BeautifulSoup]:
     # very basic, minimum validation
     tries = tries or CONNECT_RETRIES_PAGE
 
     r = None
     retries = 0
-    async with ClientSession() as s:
+    async with ClientSession(connector=connector) as s:
         s.headers.update(DEFAULT_HEADERS.copy())
         if headers is not None:
             s.headers.update(headers.copy())
@@ -31,7 +31,7 @@ async def fetch_html(url: str, *, proxy=None, tries=None, headers=None, cookies=
             s.cookie_jar.update_cookies(cookies.copy(), http_parser.URL(urlparse(url).netloc))
         while retries < tries:
             try:
-                async with s.request('GET', url, timeout=5, proxy=proxy) as r:
+                async with await s.request('GET', url, timeout=10) as r:
                     r.raise_for_status()
                     content = await r.read()
                     return BeautifulSoup(content, 'html.parser')

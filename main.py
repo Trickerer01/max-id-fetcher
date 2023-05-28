@@ -7,9 +7,11 @@ Author: trickerer (https://github.com/trickerer, https://github.com/trickerer01)
 #
 
 import sys
-from asyncio import run as run_async, sleep, as_completed
+from asyncio import run as run_async, sleep, as_completed, Future
 from re import compile as re_compile, search as re_search
 from urllib.parse import urlparse
+
+from aiohttp_socks import ProxyConnector, ProxyType
 
 from defs import (
     Log, PROXY_DEFAULT_STR, NM_SITE_PAGE_REQUEST_BASE, RN_SITE_PAGE_REQUEST_BASE, RV_SITE_PAGE_REQUEST_BASE, RX_SITE_PAGE_REQUEST_BASE
@@ -28,7 +30,9 @@ async def fetch_nm() -> str:
 async def fetch_rn() -> str:
     rn_page_entry_class_re = re_compile(r'^thumb shm-thumb.+?$')
     rn_page_entry_href_re = re_compile(r'^/post/view/(\d+)$')
-    a_html = await fetch_html(RN_SITE_PAGE_REQUEST_BASE, proxy=PROXY_DEFAULT_STR)
+    pp = urlparse(PROXY_DEFAULT_STR)
+    ptype = ProxyType.SOCKS5 if pp.scheme in ['socks5', 'socks5h'] else ProxyType.HTTP
+    a_html = await fetch_html(RN_SITE_PAGE_REQUEST_BASE, connector=ProxyConnector(proxy_type=ptype, host=pp.hostname, port=pp.port))
     assert a_html
     maxid = re_search(rn_page_entry_href_re, str(a_html.find('a', class_=rn_page_entry_class_re).get('href'))).group(1)
     return f'RN: {maxid}'
@@ -61,7 +65,7 @@ async def main() -> None:
     aresults = [fetch_nm(), fetch_rn(), fetch_rv(), fetch_rx()]
     f_strings = {}
 
-    for cr in as_completed(aresults):
+    for cr in as_completed(aresults):  # type: Future[str]
         s = await cr
         f_strings[s[:2]] = s
 
