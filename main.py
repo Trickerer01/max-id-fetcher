@@ -14,7 +14,8 @@ from urllib.parse import urlparse
 from aiohttp_socks import ProxyConnector, ProxyType
 
 from defs import (
-    Log, PROXY_DEFAULT_STR, NM_SITE_PAGE_REQUEST_BASE, RN_SITE_PAGE_REQUEST_BASE, RV_SITE_PAGE_REQUEST_BASE, RX_SITE_PAGE_REQUEST_BASE
+    Log, PROXY_DEFAULT_STR, NM_SITE_PAGE_REQUEST_BASE, RN_SITE_PAGE_REQUEST_BASE, RV_SITE_PAGE_REQUEST_BASE, RX_SITE_PAGE_REQUEST_BASE,
+    RS_SITE_PAGE_REQUEST_BASE,
 )
 from fetch_html import fetch_html
 
@@ -59,18 +60,26 @@ async def fetch_rx() -> str:
     return f'RX: {maxid}'
 
 
+async def fetch_rs() -> str:
+    rs_page_post_a = re_compile(r'^\d+$')
+    a_html = await fetch_html(RS_SITE_PAGE_REQUEST_BASE)
+    assert a_html
+    maxid = str(a_html.find('a', id=rs_page_post_a).get('id'))
+    return f'RS: {maxid}'
+
+
 async def main() -> None:
     if '--silent' not in sys.argv:
         input(f'\n{"#" * 47}\n# MAKE SURE REQUIRED PROXIES / UNBLOCKERS ARE ENABLED! #\n{"#" * 47}\nPress <Enter> to continue...\n')
 
-    aresults = (fetch_nm(), fetch_rn(), fetch_rv(), fetch_rx())
+    aresults = (fetch_nm(), fetch_rn(), fetch_rv(), fetch_rx(), fetch_rs(),)
     f_strings = dict()
 
     for cr in as_completed(aresults):  # type: Future[str]
         s = await cr
         f_strings[s[:2]] = s
 
-    Log('\n'.join(f_strings[k] for k in ('NM', 'RN', 'RV', 'RX')))
+    Log('\n'.join(f_strings[k] for k in ('NM', 'RN', 'RV', 'RX', 'RS',)))
 
 
 async def run_main() -> None:

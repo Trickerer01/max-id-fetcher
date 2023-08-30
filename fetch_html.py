@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 from aiohttp import ClientSession, http_parser
 from bs4 import BeautifulSoup
 
-from defs import CONNECT_RETRIES_PAGE, Log, DEFAULT_HEADERS
+from defs import Log, CONNECT_RETRIES_PAGE, CONNECT_TIMEOUT, DEFAULT_HEADERS
 
 
 async def fetch_html(url: str, *, connector=None, tries=None, headers=None, cookies=None) -> Optional[BeautifulSoup]:
@@ -31,7 +31,7 @@ async def fetch_html(url: str, *, connector=None, tries=None, headers=None, cook
             s.cookie_jar.update_cookies(cookies.copy(), http_parser.URL(urlparse(url).netloc))
         while retries < tries:
             try:
-                async with await s.request('GET', url, timeout=10) as r:
+                async with await s.request('GET', url, timeout=CONNECT_TIMEOUT) as r:
                     r.raise_for_status()
                     content = await r.read()
                     return BeautifulSoup(content, 'html.parser')
